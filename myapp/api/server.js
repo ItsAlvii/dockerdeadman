@@ -1,19 +1,17 @@
-const express = require("express");
+const express = require('express');
 const app = express();
-const PORT = 3000;
+const port = 3000;
 
-// test route
-app.get("/api/test", (req, res) => {
-  res.json({ message: "API is working!" });
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello from API' });
 });
 
-// if you really want `/api` root to respond
-app.get("/api", (req, res) => {
-  res.json({ message: "Welcome to the API root" });
+app.get('/test', (req, res) => {
+  res.json({ message: 'This is a test route' });
 });
 
-app.listen(PORT, () => {
-  console.log(`API running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`API running at http://localhost:${port}/`);
 });
-
-
