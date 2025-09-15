@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>deadman — Follow the Night Light (emo edition)</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  /* 4th image chosen as background (Pinterest pin page used as source). */
+  --bg-image: url("https://i.pinimg.com/736x/ca/c1/af/cac1afd4805fd878838a452edad3040d.jpg");
+
+  --paper-cream: #efe7e5;
+  --ink-dark: #0f0f10;
+  --muted: #9b9b9b;
+  --accent: #5b4a4a;
+  --grain-opacity: 0.06;
+  --page-width: min(980px, 92vw);
+}
+
+/* Reset + base */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0b0b0b;font-family:"Merriweather",serif;color:#eee;line-height:1.45}
+body {
+  background-color: #0b0b0b;
+  /* black tint over the photo (adjust the 0.45 if you want darker/lighter) */
+  background-image:
+    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+    var(--bg-image);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  padding: 36px 0 80px;
+  color: #e9e6e6;
+  backdrop-filter: none !important; /* ensure no blur */
+}
+
+/* grain / film effect */
+body::after{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  background-image:linear-gradient(transparent, transparent), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect width="4" height="4" fill="%23000000" fill-opacity="0.02"/></svg>');
+  mix-blend-mode:overlay;
+  opacity:var(--grain-opacity);
+}
+
+/* soft vignette */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%);
+  mix-blend-mode:multiply;
+}
+
+/* container */
+.container{
+  width:var(--page-width);
+  margin:0 auto;
+  padding:28px;
+  backdrop-filter: blur(4px) saturate(90%);
+}
+
+/* header: moody, torn paper feel */
+.header{
+  display:flex;
+  align-items:flex-end;
+  gap:18px;
+  margin-bottom:28px;
+  position:relative;
+}
+.brand{
+  font-family:"Special Elite", monospace;
+  font-size:44px;
+  letter-spacing:2px;
+  color:#f3efe9;
+  transform:translateY(4px);
+}
+.title{
+  font-size:18px;
+  font-weight:700;
+  text-transform:uppercase;
+  color:#dcd7d7;
+  opacity:0.95;
+  margin-bottom:6px;
+}
+
+/* torn paper accent behind header */
+.header::after{
+  content:"";
+  position:absolute;
+  left:-6px; right:-6px; top:56px;
+  height:36px;
+  background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(0,0,0,0.06));
+  transform:rotate(-1deg);
+  border-top:1px dashed rgba(255,255,255,0.03);
+  filter:contrast(.9);
+  z-index:-1;
+}
+
+/* layout: left player column, right journal */
+.layout{
+  display:grid;
+  grid-template-columns: 360px 1fr;
+  gap:28px;
+  align-items:start;
+}
+
+/* player card — cassette / analog aesthetic */
+.player{
+  background:linear-gradient(180deg, rgba(18,18,18,0.85), rgba(8,8,8,0.88));
+  border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px;
+  padding:18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  position:relative;
+  overflow:hidden;
+}
+
+/* subtle paper texture inside player */
+.player .paper{
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));
+  border-radius:8px;
+  padding:12px;
+}
+
+/* cassette top stripes */
+.cassette-top{
+  height:8px;
+  width:100%;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 6px, rgba(0,0,0,0.02) 6px 12px);
+  border-radius:6px;
+  margin-bottom:12px;
+}
+
+/* big melancholic artwork */
+.art{
+  width:100%;
+  height:180px;
+  border-radius:6px;
+  background-size:cover;
+  background-position:center center;
+  background-repeat:no-repeat;
+  filter:grayscale(.6) contrast(.95) brightness(.92);
+  margin-bottom:12px;
+  box-shadow: inset 0 -30px 60px rgba(0,0,0,0.5);
+}
+
+/* controls styled like analog deck */
+.controls{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-bottom:10px;
+}
+.btn{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.04);
+  width:56px;height:56px;border-radius:8px;
+  display:grid;place-items:center;
+  cursor:pointer;
+  user-select:none;
+  transition: transform .08s ease, background .12s ease;
+  font-size:18px;
+}
+.btn:active{ transform:translateY(1px) scale(.995); }
+.btn:hover{ background:rgba(255,255,255,0.045); }
+
+/* tape meter / progress */
+.seek-wrap{flex:1}
+.seek{
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:8px; background:linear-gradient(90deg,#333, #444);
+  border-radius:6px; outline:none;
+}
+.seek::-webkit-slider-thumb{ -webkit-appearance:none; width:14px;height:14px;border-radius:50%; background:#efe7e5; border:2px solid #3b3737; box-shadow:0 2px 6px rgba(0,0,0,0.5); cursor:pointer; }
+
+/* small meta */
+.meta{ display:flex; justify-content:space-between; color:var(--muted); font-size:13px; margin-top:8px; }
+
+/* journal: torn pages, handwriting accent */
+.journal{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
+  border-radius:12px;
+  padding:22px;
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.55);
+}
+.journal .paper-sheet{
+  background: linear-gradient(180deg, #faf6f4, #f2eae7);
+  color:#1b1717;
+  border-radius:8px;
+  padding:20px;
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  transform:rotate(-0.75deg);
+}
+
+/* MAKE LYRICS SCROLLABLE */
+.lyrics-scroll{
+  max-height: 56vh; /* scrollable area */
+  overflow:auto;
+  padding-right:12px; /* give room for scrollbar */
+  margin-top:8px;
+}
+
+/* subtle scrollbar styles for modern browsers */
+.lyrics-scroll::-webkit-scrollbar{ width:10px; }
+.lyrics-scroll::-webkit-scrollbar-thumb{ background:rgba(64,56,56,0.45); border-radius:6px; border:2px solid rgba(0,0,0,0.12); }
+.lyrics-scroll::-webkit-scrollbar-track{ background:transparent; }
+
+/* headings and entries */
+.journal h2{
+  font-family:"Special Elite", monospace;
+  font-size:20px;
+  letter-spacing:1px;
+  margin-bottom:8px;
+  color:#2b2626;
+}
+.entry{ margin-bottom:18px; padding-left:8px; font-size:15px; color:#282222; white-space:pre-wrap; }
+
+/* little handwritten notes */
+.handwritten{
+  font-family:"Special Elite", monospace;
+  font-size:13px;
+  color:#4a3f3f;
+  margin-top:12px;
+}
+
+/* footer */
+.footer{
+  margin-top:40px;
+  color:rgba(255,255,255,0.24);
+  text-align:center;
+  font-size:13px;
+}
+
+/* responsive */
+@media (max-width:880px){
+  .layout{ grid-template-columns: 1fr; }
+  .player{ order:2 }
+  .journal{ order:1 }
+  .art{ height:220px; }
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header class="header" role="banner">
+      <div class="brand">deadman</div>
+      <div>
+        <div class="title">Follow the Night Light — emo edition</div>
+        <div style="color:var(--muted); font-size:13px; margin-top:6px">a midnight cassette, a folded page, a quiet city</div>
+      </div>
+    </header>
+
+    <main class="layout" role="main">
+      <!-- left column: audio player -->
+      <aside class="player" aria-label="Audio player">
+        <div class="paper">
+          <div class="cassette-top"></div>
+
+          <!-- artwork: uses the same background as page for cohesion -->
+          <div class="art" id="artwork" style="background-image: var(--bg-image);"></div>
+
+          <div style="display:flex;gap:12px;align-items:center;">
+            <div class="controls">
+              <div class="btn" id="play">►</div>
+              <div class="btn" id="stop">■</div>
+            </div>
+
+            <div class="seek-wrap" style="flex:1">
+              <input id="seek" class="seek" type="range" min="0" max="100" value="0" aria-label="Seek">
+            </div>
+          </div>
+
+          <div class="meta">
+            <div id="time">0:00 / 0:00</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <label style="font-size:13px;color:var(--muted)"><input id="loop" type="checkbox" style="vertical-align:middle;margin-right:6px"> loop</label>
+            </div>
+          </div>
+
+          <div class="handwritten">cassette notes — recorded at 2AM, sometimes i think the streetlights are crying</div>
+        </div>
+      </aside>
+
+      <!-- right column: journal / lyrics -->
+      <section class="journal" aria-label="Lyrics & notes">
+        <div class="paper-sheet">
+          <h2>lyrics & midnight notes</h2>
+
+          <!-- SCROLLABLE LYRICS BLOCK -->
+          <div class="lyrics-scroll" aria-live="polite">
+<article class="entry">
+理由なら話せない これ以上踏み入らないで 認めたく無い
+
+riyuu kara hanasenai kore ijou fumi iranai de tokometakunai
+
+There is a reason for why I cannot speak, since I haven’t walked nor seen anything
+
+心の底の箱の 混沌な感情が溢れ出しそう
+
+kokoro no soko no hako no kontonna kanshou afuredeshisou
+
+Within my chest, the deepest reaches of my heart shall begin to overflow with chaotic emotion
+
+解ってくれなくてもかまわない 信じて欲しいなんて思わない
+
+watate kurenakute mo kamawanai shinjite hoshii nante omowanai
+
+You’ve given up on understanding and no longer care, I want you to believe in such things like that*¹
+
+理由なら話せない これ以上近寄らないで 見せたく無い
+
+riyuu kara hanasenai kore ijou chikayonai de misetakunai
+
+There is a reason for why I can’t speak, since I haven’t drawn close or shown a thing to you
+
+心の底の箱の 混沌な感情が 溢れそう
+
+kokoro no soko no hako no kontonna kanshou afuredeshisou
+
+Within my chest, the deepest reaches of my heart shall begin to overflow with chaotic emotion
+
+押し寄せる人並み 踏み付けても見ない振り
+
+oshi yoseru hitonami fumi tsukete mo minai furi
+
+It forcibly approaches, and this ordinary trample is attaching too. I don’t see the pretense.
+
+容易く転がる悲劇が無数に 救いの手なんて無かった
+
+tayasuku korogaru higeki ga musou ni sukui no te nante nakatta
+
+Easily transforming to malice, countless hands of salvation haven’t done a thing to help me!
+
+星空に太陽を打ち上げよう
+
+hoshizora ni taiyou wo uchiageyou
+
+The sun shall shoot upwards to the starry sky
+
+誰よりも大きな輝きを
+
+dare yorimo ookina kagayaki wo
+
+It greatly glitters, unlike anything you’ve ever seen*²
+
+夜空の太陽に出掛けよう
+
+Yozora no taiyou ni degakeyou
+
+The sun of the night sky shall depart
+
+ピカピカ銀色の飛行船で
+
+pika pika giniro no hikosen de
+
+In a glittering silver aircraft
+
+終夜灯羽根を焦がす 破れた羽根を焦がす
+
+Night Light hane wo kogasu yabureta hane wo kagasu
+
+Burn the wings of the Night Light, burn those torn wings
+
+思い出を消さないように 忘れてしまわないように
+
+omoide wo kesanai you ni wasurete shimawanai you ni
+
+These memories haven’t been erased, so that I don’t end up forgetting them, in order to do that I must…
+
+終夜灯羽根を焦がす 破れた羽根を焦がす
+
+Night Light hane wo kogasu yabureta hane wo kagasu
+
+Burn the wings of the Night Light, burn those torn wings
+
+もう一度信じてみたい 忘れてしまわないように
+
+mou ichido shinjite mitai wasurete shimawanai you ni
+
+Have that degree of belief one more time, so that you don’t completely forget
+
+理由なら話せない これは今も変わらない 許して欲しい
+
+riyuu kara hanasenai kore ha imamo kawaranai yurushite hoshii
+
+There is a reason for why I cannot speak, it still remains the same. Please, do forgive me.
+
+心の底の箱の 小さな感情が 溢れそう
+
+kokoro no soko no hako no chiisana kanshou ga afuresou
+
+Within my chest, the deepest reaches of my heart shall overflow with small feelings
+
+幼き日は夢 何処にも無かった 現実は嘘つき その笑顔ずるい
+
+osanaki hi ha yume dokoro nimo naktta genjitsu usotsuki sono egao zurui
+
+The still young night is a dream set in nothingness. Reality is a liar. That smiling face is dishonest.
+
+どの道不完全 何処にも無いから 君の手をひいて
+
+dono michi funkansen dokoro nimo naikara kimi no te wo hiite
+
+Which way is the wrong way? Wherever there is nothing. I tug at your hand…
+
+星空に太陽を打ち上げよう
+
+hoshizora ni taiyou wo uchiageyou
+
+The sun shall shoot upwards to the starry sky
+
+誰よりも大きな輝きを
+
+dare yorimo ookina kagayaki wo
+
+It greatly glitters unlike anything you’ve ever seen
+
+夜空の太陽に出掛けよう
+
+Yozora no taiyou ni degakeyou
+
+The sun of the night sky shall depart
+
+ピカピカ銀色の飛行船に乗って
+
+pika pika giniro no hikosen ni notte
+
+Go on board the glittering silver aircraft
+
+乗って…乗って…乗って…乗って…
+
+notte notte notte notte
+
+Go on board… Go on board… Go on board… Go on board…
+</article>
+          </div>
+
+          <div class="handwritten">— leave this page open. if the world changes, it will fold along the crease.</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">© 2025 deadman — soft bones & hard songs</footer>
+  </div>
+
+  <!-- audio element placed at end -->
+  <audio id="audio" preload="metadata">
+    <source src="follow-the-night-light.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+<script>
+/* Player logic unchanged, minimal and dependable. */
+const audio = document.getElementById('audio');
+const playBtn = document.getElementById('play');
+const stopBtn = document.getElementById('stop');
+const seek = document.getElementById('seek');
+const timeLabel = document.getElementById('time');
+const loopCheckbox = document.getElementById('loop');
+
+playBtn.addEventListener('click', () => {
+  if (audio.paused) {
+    audio.play();
+    playBtn.textContent = '❚❚';
+    playBtn.setAttribute('aria-label','Pause');
+  } else {
+    audio.pause();
+    playBtn.textContent = '►';
+    playBtn.setAttribute('aria-label','Play');
+  }
+});
+
+stopBtn.addEventListener('click', () => {
+  audio.pause();
+  audio.currentTime = 0;
+  playBtn.textContent = '►';
+});
+
+audio.addEventListener('timeupdate', () => {
+  if (audio.duration && !isNaN(audio.duration)) {
+    const pct = (audio.currentTime / audio.duration) * 100;
+    seek.value = pct;
+    timeLabel.textContent = formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
+  }
+});
+
+seek.addEventListener('input', () => {
+  if (audio.duration && !isNaN(audio.duration)) {
+    audio.currentTime = (seek.value / 100) * audio.duration;
+  }
+});
+
+loopCheckbox.addEventListener('change', () => {
+  audio.loop = loopCheckbox.checked;
+});
+
+function formatTime(s) {
+  if (!s || isNaN(s) || !isFinite(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60).toString().padStart(2,'0');
+  return `${m}:${sec}`;
+}
+
+audio.addEventListener('loadedmetadata', () => {
+  timeLabel.textContent = formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
+});
+
+audio.addEventListener('error', (e) => {
+  console.warn('Audio failed to load or play', e);
+  timeLabel.textContent = 'Audio unavailable';
+});
+</script>
+</body>
+</html>
